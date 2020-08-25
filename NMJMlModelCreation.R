@@ -96,6 +96,38 @@ save(RFFitNoKFold, file="NMJRFFit")
 
 #########################################################################################################################
 
+RFFitNoKFold <- train(as.factor(NMJCounting) ~ ., 
+                      data = trainData, 
+                      method = "ranger")
+
+
+RFPredNoKFold <- predict(RFFitNoKFold, testData) 
+# compare predicted outcome and true outcome
+confusionMatrix(RFPredNoKFold, as.factor(testData$NMJCounting))
+
+save(RFFitNoKFold, file="NMJRFFitEqualised")
+
+#########################################################################################################################
+
+fitControl <- trainControl(## 10-fold CV
+  method = "repeatedcv",
+  number = 10,
+  ## repeated ten times
+  repeats = 10)
+
+
+RFFitKFold <- train(as.factor(NMJCounting) ~ ., 
+                    data = trainData, 
+                    method = "ranger",
+                    trControl = fitControl)
+
+RFPredKFold <- predict(RFFitKFold, testData) 
+confusionMatrix(RFPredKFold, as.factor(testData$NMJCounting))
+
+save(RFFitKFold, file="NMJRFKfoldFitEqualised")
+
+#########################################################################################################################
+
 #Create a ML dataset with k-fold validation
 fitControl <- trainControl(## 10-fold CV
   method = "repeatedcv",
@@ -129,3 +161,4 @@ rfFitWctrl <- train(NMJCounting ~ ., data=trainData,
 res <- evalm(rfFitWctrl,gnames='rf')
 
 save(rfFitWctrl, file="NMJRFFitAUC")
+
