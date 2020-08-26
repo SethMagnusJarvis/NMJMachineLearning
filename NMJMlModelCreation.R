@@ -37,7 +37,7 @@ MLDataset <- MLDataset[rowSums(is.na(MLDataset)) != ncol(MLDataset),] %>%
 
 #Change Variables from Text so caret can parse them
 MLDatasetChanged <- MLDataset
-MLDatasetChanged$Muscle[MLDatasetChanged$Muscle == "FBP"] <- 0
+MLDatasetChanged$Muscle[MLDatasetChanged$Muscle == "FDB"] <- 0
 MLDatasetChanged$Muscle[MLDatasetChanged$Muscle == "Lumbricals"] <- 1
 MLDatasetChanged$Fenotype[MLDatasetChanged$Fenotype == "Healthy"] <- 0
 MLDatasetChanged$Fenotype[MLDatasetChanged$Fenotype == "Disease"] <- 1
@@ -75,56 +75,28 @@ trainData <- MLDatasetTrimmed[trainRowNumbers,]
 
 testData <- MLDatasetTrimmed[-trainRowNumbers,]
 
+##########################################################################################################################
+
 #Format data for filtering
 x = select(trainData, -NMJCounting)
 y = trainData$NMJCounting
 
 trainData$NMJCounting <- y
 
+##########################################################################################################################
 
 #Fit the ML model with k-fold validation
 RFFitNoKFold <- train(as.factor(NMJCounting) ~ ., 
                       data = trainData, 
                       method = "ranger")
 
-
 RFPredNoKFold <- predict(RFFitNoKFold, testData) 
 # compare predicted outcome and true outcome
 confusionMatrix(RFPredNoKFold, as.factor(testData$NMJCounting))
 
-save(RFFitNoKFold, file="NMJRFFit")
-
-#########################################################################################################################
-
-RFFitNoKFold <- train(as.factor(NMJCounting) ~ ., 
-                      data = trainData, 
-                      method = "ranger")
 
 
-RFPredNoKFold <- predict(RFFitNoKFold, testData) 
-# compare predicted outcome and true outcome
-confusionMatrix(RFPredNoKFold, as.factor(testData$NMJCounting))
-
-save(RFFitNoKFold, file="NMJRFFitEqualised")
-
-#########################################################################################################################
-
-fitControl <- trainControl(## 10-fold CV
-  method = "repeatedcv",
-  number = 10,
-  ## repeated ten times
-  repeats = 10)
-
-
-RFFitKFold <- train(as.factor(NMJCounting) ~ ., 
-                    data = trainData, 
-                    method = "ranger",
-                    trControl = fitControl)
-
-RFPredKFold <- predict(RFFitKFold, testData) 
-confusionMatrix(RFPredKFold, as.factor(testData$NMJCounting))
-
-save(RFFitKFold, file="NMJRFKfoldFitEqualised")
+save(RFFitNoKFold, file="NMJRFFit.RData")
 
 #########################################################################################################################
 
@@ -144,7 +116,7 @@ RFFitKFold <- train(as.factor(NMJCounting) ~ .,
 RFPredKFold <- predict(RFFitKFold, testData) 
 confusionMatrix(RFPredKFold, as.factor(testData$NMJCounting))
 
-save(RFFitKFold, file="NMJRFKfoldFit")
+save(RFFitKFold, file="NMJRFKfoldFit.RData")
 
 #########################################################################################################################
 
@@ -160,5 +132,103 @@ rfFitWctrl <- train(NMJCounting ~ ., data=trainData,
 
 res <- evalm(rfFitWctrl,gnames='rf')
 
-save(rfFitWctrl, file="NMJRFFitAUC")
+save(rfFitWctrl, file="NMJRFFitAUC.RData")
+
+#########################################################################################################################
+##########################################Equalise the Datasets##########################################################
+#########################################################################################################################
+
+MLDatasetTrimmedEqualised <- MLDatasetTrimmed %>% 
+  group_by(NMJCounting) %>%
+  do(sample_n(.,1000))
+
+trainRowNumbersEqualised <- createDataPartition(MLDatasetTrimmedEqualised$NMJCounting, p=0.8, list=FALSE)
+
+trainDataEqualised <- MLDatasetTrimmedEqualised[trainRowNumbersEqualised,]
+
+testDataEqualised <- MLDatasetTrimmedEqualised[-trainRowNumbersEqualised,]
+
+#Format data for filtering
+xEqualised = select(trainDataEqualised, -NMJCounting)
+yEqualised = trainDataEqualised$NMJCounting
+
+trainDataEqualised$NMJCounting <- yEqualised
+
+
+RFFitNoKFold <- train(as.factor(NMJCounting) ~ ., 
+                      data = trainDataEqualised, 
+                      method = "ranger")
+
+
+RFPredNoKFold <- predict(RFFitNoKFold, testData) 
+# compare predicted outcome and true outcome
+confusionMatrix(RFPredNoKFold, as.factor(testData$NMJCounting))
+
+save(RFFitNoKFold, file="NMJRFFitEqualised.RData")
+
+#########################################################################################################################
+
+fitControl <- trainControl(## 10-fold CV)
+  method = "repeatedcv",
+  number = 10,
+  ## repeated ten times
+  repeats = 10)
+
+RFFitKFold <- train(as.factor(NMJCounting) ~ ., 
+                    data = trainDataEqualised, 
+                    method = "ranger",
+                    trControl = fitControl)
+
+RFPredKFold <- predict(RFFitKFold, testData) 
+confusionMatrix(RFPredKFold, as.factor(testData$NMJCounting))
+
+save(RFFitKFold, file="NMJRFKfoldFitEqualised.RData")
+
+#########################################################################################################################
+##########################################Remove extra variables#########################################################
+#########################################################################################################################
+testDataDropped <- select(testData, -Muscle, -Fenotype, -Genotype, -Maturity)
+trainDataDropped <- select(trainData, -Muscle, -Fenotype, -Genotype, -Maturity)
+
+#Format data for filtering
+x = select(trainDataDropped, -NMJCounting)
+y = trainDataDropped$NMJCounting
+
+trainDataDropped$NMJCounting <- y
+
+##########################################################################################################################
+
+#Fit the ML model with k-fold validation
+RFFitNoKFoldNormalParam <- train(as.factor(NMJCounting) ~ ., 
+                      data = trainDataDropped, 
+                      method = "ranger")
+
+RFPredNoKFoldNormalParam <- predict(RFFitNoKFoldNormalParam, testDataDropped) 
+# compare predicted outcome and true outcome
+confusionMatrix(RFPredNoKFold, as.factor(testDataDropped$NMJCounting))
+
+
+
+save(RFFitNoKFoldNormalParam, file="NMJRFFitNoNormalParam.RData")
+
+#########################################################################################################################
+
+#Create a ML dataset with k-fold validation
+fitControl <- trainControl(## 10-fold CV
+  method = "repeatedcv",
+  number = 10,
+  ## repeated ten times
+  repeats = 10)
+
+
+RFFitKFoldNormalParam <- train(as.factor(NMJCounting) ~ ., 
+                    data = trainDataDropped, 
+                    method = "ranger",
+                    trControl = fitControl)
+
+RFPredKFoldNormalParam <- predict(RFFitKFoldNormalParam, testDataDropped) 
+confusionMatrix(RFPredKFold, as.factor(testDataDropped$NMJCounting))
+
+save(RFFitKFoldNormalParam, file="NMJRFKfoldFitNormalParam.RData")
+
 
