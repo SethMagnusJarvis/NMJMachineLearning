@@ -72,17 +72,15 @@ trainData$NMJCounting <- y
 ##########################################################################################################################
 
 #Fit the ML model with k-fold validation
-RFFitNoKFold <- train(as.factor(NMJCounting) ~ ., 
-                      data = trainData, 
-                      method = "ranger")
+RFFitNoKFoldNormalParam <- train(as.factor(NMJCounting) ~ ., 
+                                 data = trainData, 
+                                 method = "ranger")
 
-RFPredNoKFold <- predict(RFFitNoKFold, testData) 
+RFPredNoKFoldNormalParam <- predict(RFFitNoKFoldNormalParam, testData) 
 # compare predicted outcome and true outcome
-confusionMatrix(RFPredNoKFold, as.factor(testData$NMJCounting))
+confusionMatrix(RFPredNoKFoldNormalParam, as.factor(testData$NMJCounting))
 
-
-
-save(RFFitNoKFold, file="NMJRFFitNormalParam.RData")
+saveRDS(RFFitNoKFoldNormalParam, file="RFFitNormalParam.rds")
 
 #########################################################################################################################
 
@@ -94,15 +92,15 @@ fitControl <- trainControl(## 10-fold CV
   repeats = 10)
 
 
-RFFitKFold <- train(as.factor(NMJCounting) ~ ., 
-                    data = trainData, 
-                    method = "ranger",
-                    trControl = fitControl)
+RFFitKFoldNormalParam <- train(as.factor(NMJCounting) ~ ., 
+                               data = trainData, 
+                               method = "ranger",
+                               trControl = fitControl)
 
-RFPredKFold <- predict(RFFitKFold, testData) 
-confusionMatrix(RFPredKFold, as.factor(testData$NMJCounting))
+RFPredKFoldNormalParam <- predict(RFFitKFoldNormalParam, testData) 
+confusionMatrix(RFPredKFoldNormalParam, as.factor(testData$NMJCounting))
 
-save(RFFitKFold, file="NMJRFKfoldFitNormalParam.RData")
+saveRDS(RFFitKFoldNormalParam, file="RFFitKFoldNormalParam.rds")
 
 #########################################################################################################################
 
@@ -118,7 +116,8 @@ rfFitWctrl <- train(NMJCounting ~ ., data=trainData,
 
 res <- evalm(rfFitWctrl,gnames='rf')
 
-save(rfFitWctrl, file="NMJRFFitAUC.RData")
+
+saveRDS(rfFitWctrl, file="RFFitKFoldNormalParamAUC.rds")
 
 #########################################################################################################################
 ##########################################Remove extra variables#########################################################
@@ -135,17 +134,16 @@ trainDataDropped$NMJCounting <- y
 ##########################################################################################################################
 
 #Fit the ML model with k-fold validation
-RFFitNoKFoldNormalParam <- train(as.factor(NMJCounting) ~ ., 
-                                 data = trainDataDropped, 
-                                 method = "ranger")
+RFFitNoKFoldNoNormalParam <- train(as.factor(NMJCounting) ~ ., 
+                                   data = trainDataDropped, 
+                                   method = "ranger")
 
-RFPredNoKFoldNormalParam <- predict(RFFitNoKFoldNormalParam, testDataDropped) 
+RFPredNoKFoldNormalParam <- predict(RFFitNoKFoldNoNormalParam, testDataDropped) 
 # compare predicted outcome and true outcome
 confusionMatrix(RFPredNoKFold, as.factor(testDataDropped$NMJCounting))
 
 
-
-save(RFFitNoKFoldNormalParam, file="NMJRFFit.RData")
+saveRDS(RFFitNoKFoldNoNormalParam, file="RFFit.rds")
 
 #########################################################################################################################
 
@@ -157,15 +155,16 @@ fitControl <- trainControl(## 10-fold CV
   repeats = 10)
 
 
-RFFitKFoldNormalParam <- train(as.factor(NMJCounting) ~ ., 
-                               data = trainDataDropped, 
-                               method = "ranger",
-                               trControl = fitControl)
+RFFitKFoldNoNormalParam <- train(as.factor(NMJCounting) ~ ., 
+                                 data = trainDataDropped, 
+                                 method = "ranger",
+                                 trControl = fitControl)
 
-RFPredKFoldNormalParam <- predict(RFFitKFoldNormalParam, testDataDropped) 
+RFPredKFoldNoNormalParam <- predict(RFFitKFoldNoNormalParam, testDataDropped) 
 confusionMatrix(RFPredKFold, as.factor(testDataDropped$NMJCounting))
 
-save(RFFitKFoldNormalParam, file="NMJRFKfoldFit.RData")
+saveRDS(RFFitKFoldNoNormalParam, file="RFFitKFold.rds")
+
 
 #########################################################################################################################
 ##########################################Equalise the Datasets##########################################################
@@ -188,16 +187,16 @@ yEqualised = trainDataEqualised$NMJCounting
 trainDataEqualised$NMJCounting <- yEqualised
 
 
-RFFitNoKFold <- train(as.factor(NMJCounting) ~ ., 
-                      data = trainDataEqualised, 
-                      method = "ranger")
+RFFitNoKFoldEqualised <- train(as.factor(NMJCounting) ~ ., 
+                               data = trainDataEqualised, 
+                               method = "ranger")
 
 
-RFPredNoKFold <- predict(RFFitNoKFold, testData) 
+RFPredNoKFoldEqualised <- predict(RFFitNoKFoldEqualised, testDataEqualised) 
 # compare predicted outcome and true outcome
-confusionMatrix(RFPredNoKFold, as.factor(testData$NMJCounting))
+confusionMatrix(RFPredNoKFoldEqualised, as.factor(testDataEqualised$NMJCounting))
 
-save(RFFitNoKFold, file="NMJRFFitEqualised.RData")
+saveRDS(RFFitNoKFoldEqualised, file="NMJRFFitEqualised.rds")
 
 #########################################################################################################################
 
@@ -207,12 +206,13 @@ fitControl <- trainControl(## 10-fold CV)
   ## repeated ten times
   repeats = 10)
 
-RFFitKFold <- train(as.factor(NMJCounting) ~ ., 
-                    data = trainDataEqualised, 
-                    method = "ranger",
-                    trControl = fitControl)
+RFFitKFoldEqualised <- train(as.factor(NMJCounting) ~ ., 
+                             data = trainDataEqualised, 
+                             method = "ranger",
+                             trControl = fitControl)
 
-RFPredKFold <- predict(RFFitKFold, testData) 
-confusionMatrix(RFPredKFold, as.factor(testData$NMJCounting))
+RFPredKFoldEqualised <- predict(RFFitKFoldEqualised, testDataEqualised) 
+confusionMatrix(RFPredKFoldEqualised, as.factor(testDataEqualised$NMJCounting))
 
-save(RFFitKFold, file="NMJRFKfoldFitEqualised.RData")
+
+saveRDS(RFFitKFoldEqualised, file="NMJRFKfoldFitEqualised.rds")
