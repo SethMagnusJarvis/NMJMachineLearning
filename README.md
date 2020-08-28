@@ -3,8 +3,6 @@
 We have created machine learning models using measurements taken from Neuromuscular Junctions which aim to be able to classify them into healthy or denervating. While we have tried seperation into partially and fully degenerating, the performance decreases.
 
 ## How can I use it
-We have created 
-
 Your data must contain the followring columns which will be used for classificatoin
 ```
 Bounds0Red, Bounds1Red, Bounds2Red, CCDistRed, CCSize0Red, CCSize1Red, CCSize2Red, CCRed, FragmentationRed, Compactness0Red, Compactness1Red, MeanIntensityRed, ShapeFactor0Red, ShapeFactor1Red, ShapeFactor2Red, SkeletonLengthRed, SurfaceVolumeRatio0Red, SurfaceVolumeRatio1Red, Surface0Red, Surface1Red, Surface2Red, Surface3Red, SurfaceDil0Red, SurfaceDil1Red, Volume0Red, Volume1Red,  Bounds0Gr, Bounds1Gr, Bounds2Gr, CCDistGr, CCSize0Gr, CCSize1Gr,  CCSize2Gr, CCGr, Compactness0Gr, Compactness1Gr, FragmentationGr, ShapeFactor0Gr, ShapeFactor1Gr, ShapeFactor2Gr, SkeletonLengthGr, SurfaceVolumeRatio0Gr, SurfaceVolumeRatio1Gr, Surface0Gr, Surface1Gr, Surface2Gr, Surface3Gr, SurfaceDil0Gr, SurfaceDil1Gr, Volume0Gr, Volume1Gr, IoUGr, AveDist, ComDist, Coverage, HausDist, NIntersection, NUnion
