@@ -40,7 +40,7 @@ MLDatasetChanged <- MLDataset
 MLDatasetChanged <- drop_na(MLDatasetChanged, NMJCounting)
 
 #Drop average dist column and merge the two types of unhealthy NMJs
-MLDatasetChangeNA <- MLDatasetChanged %>% select(-AveDist) %>%
+MLDatasetChangeNA <- MLDatasetChanged %>% select(-AveDist, -Muscle, -Fenotype, -Genotype, -Maturity) %>%
   drop_na()
 
 MLDatasetChangeNAMerge <- MLDatasetChangeNA %>% 
@@ -72,15 +72,16 @@ trainData$NMJCounting <- y
 ##########################################################################################################################
 
 #Fit the ML model with k-fold validation
-RFFitNoKFoldNormalParam <- train(as.factor(NMJCounting) ~ ., 
-                                 data = trainData, 
-                                 method = "ranger")
+RFFitNoKFold <- train(as.factor(NMJCounting) ~ ., 
+                                   data = trainData, 
+                                   method = "ranger")
 
-RFPredNoKFoldNormalParam <- predict(RFFitNoKFoldNormalParam, testData) 
+RFPredNoKFold <- predict(RFFitNoKFold, testData) 
 # compare predicted outcome and true outcome
-confusionMatrix(RFPredNoKFoldNormalParam, as.factor(testData$NMJCounting))
+confusionMatrix(RFPredNoKFold, as.factor(testData$NMJCounting))
 
-saveRDS(RFFitNoKFoldNormalParam, file="RFFitNormalParam.rds")
+
+saveRDS(RFFitNoKFoldNoNormalParam, file="RFFit.rds")
 
 #########################################################################################################################
 
@@ -92,15 +93,15 @@ fitControl <- trainControl(## 10-fold CV
   repeats = 10)
 
 
-RFFitKFoldNormalParam <- train(as.factor(NMJCounting) ~ ., 
-                               data = trainData, 
-                               method = "ranger",
-                               trControl = fitControl)
+RFFitKFold <- train(as.factor(NMJCounting) ~ ., 
+                                 data = trainData, 
+                                 method = "ranger",
+                                 trControl = fitControl)
 
-RFPredKFoldNormalParam <- predict(RFFitKFoldNormalParam, testData) 
-confusionMatrix(RFPredKFoldNormalParam, as.factor(testData$NMJCounting))
+RFPredKFold <- predict(RFFitKFold, testData) 
+confusionMatrix(RFPredKFold, as.factor(testDataDropped$NMJCounting))
 
-saveRDS(RFFitKFoldNormalParam, file="RFFitKFoldNormalParam.rds")
+saveRDS(RFFitKFoldNoNormalParam, file="RFFitKFold.rds")
 
 #########################################################################################################################
 
@@ -117,54 +118,7 @@ rfFitWctrl <- train(NMJCounting ~ ., data=trainData,
 res <- evalm(rfFitWctrl,gnames='rf')
 
 
-saveRDS(rfFitWctrl, file="RFFitKFoldNormalParamAUC.rds")
-
-#########################################################################################################################
-##########################################Remove extra variables#########################################################
-#########################################################################################################################
-testDataDropped <- select(testData, -Muscle, -Fenotype, -Genotype, -Maturity)
-trainDataDropped <- select(trainData, -Muscle, -Fenotype, -Genotype, -Maturity)
-
-#Format data for filtering
-x = select(trainDataDropped, -NMJCounting)
-y = trainDataDropped$NMJCounting
-
-trainDataDropped$NMJCounting <- y
-
-##########################################################################################################################
-
-#Fit the ML model with k-fold validation
-RFFitNoKFoldNoNormalParam <- train(as.factor(NMJCounting) ~ ., 
-                                   data = trainDataDropped, 
-                                   method = "ranger")
-
-RFPredNoKFoldNormalParam <- predict(RFFitNoKFoldNoNormalParam, testDataDropped) 
-# compare predicted outcome and true outcome
-confusionMatrix(RFPredNoKFold, as.factor(testDataDropped$NMJCounting))
-
-
-saveRDS(RFFitNoKFoldNoNormalParam, file="RFFit.rds")
-
-#########################################################################################################################
-
-#Create a ML dataset with k-fold validation
-fitControl <- trainControl(## 10-fold CV
-  method = "repeatedcv",
-  number = 10,
-  ## repeated ten times
-  repeats = 10)
-
-
-RFFitKFoldNoNormalParam <- train(as.factor(NMJCounting) ~ ., 
-                                 data = trainDataDropped, 
-                                 method = "ranger",
-                                 trControl = fitControl)
-
-RFPredKFoldNoNormalParam <- predict(RFFitKFoldNoNormalParam, testDataDropped) 
-confusionMatrix(RFPredKFold, as.factor(testDataDropped$NMJCounting))
-
-saveRDS(RFFitKFoldNoNormalParam, file="RFFitKFold.rds")
-
+saveRDS(rfFitWctrl, file="RFFitKFoldAUC.rds")
 
 #########################################################################################################################
 ##########################################Equalise the Datasets##########################################################
