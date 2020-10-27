@@ -7,6 +7,9 @@ Your data must contain the followring columns which will be used for classificat
 ```
 Bounds0Red, Bounds1Red, Bounds2Red, CCDistRed, CCSize0Red, CCSize1Red, CCSize2Red, CCRed, FragmentationRed, Compactness0Red, Compactness1Red, MeanIntensityRed, ShapeFactor0Red, ShapeFactor1Red, ShapeFactor2Red, SkeletonLengthRed, SurfaceVolumeRatio0Red, SurfaceVolumeRatio1Red, Surface0Red, Surface1Red, Surface2Red, Surface3Red, SurfaceDil0Red, SurfaceDil1Red, Volume0Red, Volume1Red,  Bounds0Gr, Bounds1Gr, Bounds2Gr, CCDistGr, CCSize0Gr, CCSize1Gr,  CCSize2Gr, CCGr, Compactness0Gr, Compactness1Gr, FragmentationGr, ShapeFactor0Gr, ShapeFactor1Gr, ShapeFactor2Gr, SkeletonLengthGr, SurfaceVolumeRatio0Gr, SurfaceVolumeRatio1Gr, Surface0Gr, Surface1Gr, Surface2Gr, Surface3Gr, SurfaceDil0Gr, SurfaceDil1Gr, Volume0Gr, Volume1Gr, IoUGr, AveDist, ComDist, Coverage, HausDist, NIntersection, NUnion
 ```
+
+For explanations of what these variables mean please see **Dictionary.csv**.
+
 The two default models are **NMJRFKfoldFit.rds** or **NMJRFFit.rds** and can be used for your predictions. 
 
 These models were trained on the full dataset which is skewed towards healthy NMJs. If you think your dataset may be more balanced, then please use **NMJRFKfoldFitEqualised.rds** or **NMJRFFitEqualised.rds** which is better able to predict degenerating NMJs but is less accurate overall.
