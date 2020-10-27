@@ -1,0 +1,49 @@
+Dicctionary,,
+,,
+,,
+,,
+,,
+Variables,Biological significance,Input for Machine learning
+centre of mass_0red/gr,Y axis,
+centre of mass_1red/gr,X axis,
+centre of mass_2red/gr,Z axis,
+centre_abs_0red/gr,Y axis,
+centre_abs_1red/gr,X axis,
+centre_abs_2red/gr,Z axis,
+volume_0red/gr,Voxel count,Volume0Red/Gr
+volume_1red/gr,Volume,Volume1Red/Gr
+fragmentationred/gr,Fragmentation index,FragmentationRed/Gr
+mean_intensityred/gr,Mean Fluorescence Intensity (MFI),MeanIntensityRed/Gr
+surface_0red/gr,Number of voxels belonging to internal border,Surface0Red/Gr
+surface_1red/gr,Internal rugosity,Surface1Red/Gr
+surface_2red/gr,Number of voxels belonging to external border,Surface2Red/Gr
+surface_3red/gr,External rugosity,Surface3Red/Gr
+surface_dil_0red/gr,Dilated surface,SurfaceDil0Red/Gr
+surface_dil_1red/gr,Eroded surface,SurfaceDil1Red/Gr
+surface volume ratio_0red/gr,Surface/Volume using dilated surface,SurfaceVolumeRatio0Red/Gr
+surface volume ratio_1red/gr,Surface/Volume using eroded surface,SurfaceVolumeRatio1Red/Gr
+compactness_0red/gr,Non-compactness using Dilated surface  (sqrt(S^3/V^2),Compactness0Red/Gr
+compactness_1red/gr,Non-compactness using Eroded surface (sqrt(S^3/V^2),Compactness1Red/Gr
+bounds_0red/gr,Length in Y,Bounds0Red/Gr
+bounds_1red/gr,Length in X,Bounds1Red/Gr
+bounds_2red/gr,Length in Z,Bounds2Red/Gr
+ccred/gr,Number of cluster or fragments/NMJ,CCRed/Gr
+cc_distred/gr,Average distance between fragments or clusters,CCDistRed/Gr
+cc_size_0red/gr,Minimal size of connected component,CCSize0Red/Gr
+cc_size_1red/gr,Maximal size of connected component,CCSize1Red/Gr
+cc_size_2red/gr,Average size of clusters,CCSize2Red/Gr
+shape_factor_0red/gr,Surface of equivalent sphere / number of elements on the surface,ShapeFactor0Red/Gr
+shape_factor_1red/gr,Surface of equivalent sphere / count of faces on the surface,ShapeFactor1Red/Gr
+shape_factor_2red/gr,,ShapeFactor2Red/Gr
+skeleton_lengthred/gr,Length,SkeletonLengthRed/Gr
+,,
+Coverage,Coverage (green/red)*100,Coverage
+ave_dist,Distance between NMJ components (green-red),AveDist
+haus_dist,Hausdorff distance,HausDist
+IoU,"Intersecting area between NMJ components, overlapping",IoUGr
+com_dist,Distance between center of mass,ComDist
+n_union,Count of union voxels,NIntersection
+n_intersection,Count of intersection voxels,NUnion
+,,
+,,
+,choose either dilated or eroded approach,
