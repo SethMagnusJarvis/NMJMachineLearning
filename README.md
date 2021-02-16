@@ -1,4 +1,4 @@
-# Prediction of Neuromuscular Junction inervation using machine learning
+# Prediction of Neuromuscular Junction innervation using machine learning
 ## What is this?
 We have created machine learning models using measurements taken from Neuromuscular Junctions which aim to be able to classify them into healthy or denervating. While we have tried seperation into partially and fully degenerating, the performance decreases.
 
